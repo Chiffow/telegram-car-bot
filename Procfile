@@ -1,0 +1,1 @@
+worker: python car_selection_bot.py
