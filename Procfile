@@ -1,1 +1,1 @@
-worker: python car_selection_bot_v12.py 
+worker: python car_selection_bot.py 
