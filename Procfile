@@ -1,1 +1,1 @@
-worker: python -c "import patch_telegram; import car_selection_bot; car_selection_bot.main()" 
+worker: python -c "import create_imghdr; import car_selection_bot; car_selection_bot.main()" 
