@@ -376,36 +376,42 @@ def main() -> None:
         logger.error("BOT_TOKEN не найден в переменных окружения!")
         return
     
-    application = Application.builder().token(token).build()
+    try:
+        application = Application.builder().token(token).build()
 
-    conv_handler = ConversationHandler(
-        entry_points=[CommandHandler("start", start)],
-        states={
-            BRAND: [
-                CallbackQueryHandler(brand_selection, pattern="^brand_"),
-                CallbackQueryHandler(navigate_brands, pattern="^nav_brands_"),
-            ],
-            MODEL: [
-                CallbackQueryHandler(model_selection, pattern="^model_"),
-                CallbackQueryHandler(navigate_models, pattern="^nav_models_"),
-                CallbackQueryHandler(start, pattern="^back_to_brands$"), # Возврат к маркам
-            ],
-            YEAR: [MessageHandler(filters.TEXT & ~filters.COMMAND, year)],
-            ENGINE_VOLUME: [MessageHandler(filters.TEXT & ~filters.COMMAND, engine_volume)],
-            FUEL_TYPE: [CallbackQueryHandler(fuel_type)],
-            DRIVETRAIN: [CallbackQueryHandler(drivetrain)],
-            MILEAGE: [MessageHandler(filters.TEXT & ~filters.COMMAND, mileage)],
-            COLOR: [MessageHandler(filters.TEXT & ~filters.COMMAND, color)],
-            BUDGET: [MessageHandler(filters.TEXT & ~filters.COMMAND, budget)],
-            CITY: [CallbackQueryHandler(city)],
-        },
-        fallbacks=[CommandHandler("cancel", cancel)],
-    )
+        conv_handler = ConversationHandler(
+            entry_points=[CommandHandler("start", start)],
+            states={
+                BRAND: [
+                    CallbackQueryHandler(brand_selection, pattern="^brand_"),
+                    CallbackQueryHandler(navigate_brands, pattern="^nav_brands_"),
+                ],
+                MODEL: [
+                    CallbackQueryHandler(model_selection, pattern="^model_"),
+                    CallbackQueryHandler(navigate_models, pattern="^nav_models_"),
+                    CallbackQueryHandler(start, pattern="^back_to_brands$"), # Возврат к маркам
+                ],
+                YEAR: [MessageHandler(filters.TEXT & ~filters.COMMAND, year)],
+                ENGINE_VOLUME: [MessageHandler(filters.TEXT & ~filters.COMMAND, engine_volume)],
+                FUEL_TYPE: [CallbackQueryHandler(fuel_type)],
+                DRIVETRAIN: [CallbackQueryHandler(drivetrain)],
+                MILEAGE: [MessageHandler(filters.TEXT & ~filters.COMMAND, mileage)],
+                COLOR: [MessageHandler(filters.TEXT & ~filters.COMMAND, color)],
+                BUDGET: [MessageHandler(filters.TEXT & ~filters.COMMAND, budget)],
+                CITY: [CallbackQueryHandler(city)],
+            },
+            fallbacks=[CommandHandler("cancel", cancel)],
+        )
 
-    application.add_handler(conv_handler)
+        application.add_handler(conv_handler)
 
-    print("Бот запущен...")
-    application.run_polling()
+        print("Бот запущен...")
+        application.run_polling(allowed_updates=Update.ALL_TYPES)
+        
+    except Exception as e:
+        logger.error(f"Ошибка при запуске бота: {e}")
+        print(f"Ошибка: {e}")
+        return
 
 
 if __name__ == "__main__":
